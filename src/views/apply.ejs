@@ -1,0 +1,255 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/header') %>
+
+<main class="wrap wrap--narrow">
+  <div class="page-head">
+    <h1>Job application</h1>
+    <p>
+      All fields are validated on the server. Nothing is checked in the browser — the form is sent
+      with <code>novalidate</code> on purpose.
+    </p>
+  </div>
+
+  <% if (errorCount > 0) { %>
+    <div class="alert" role="alert">
+      <% const fieldWord = errorCount === 1 ? 'field needs' : 'fields need'; %>
+      <p class="alert__title">
+        <span aria-hidden="true">⚠</span> Your application was not submitted —
+        <%= errorCount %> <%= fieldWord %> your attention
+      </p>
+      <ul class="alert__list">
+        <% fieldOrder.forEach(function (field) { if (errors[field]) { %>
+          <li>
+            <a href="#<%= field %>"><strong><%= fieldLabels[field] %>:</strong> <%= errors[field] %></a>
+          </li>
+        <% } }) %>
+      </ul>
+      <p class="alert__foot">Your answers have been kept — correct the highlighted fields and submit again.</p>
+    </div>
+  <% } %>
+
+  <form class="card form" method="POST" action="/apply" novalidate>
+    <section class="fs">
+      <h2 class="fs__title"><span class="fs__num">1</span> Personal details</h2>
+
+      <div class="grid2">
+        <%- include('partials/field', {
+          name: 'fullName',
+          label: 'Full name',
+          required: true,
+          placeholder: 'e.g. Nilesh Patil',
+          autocomplete: 'name',
+          maxlength: 60,
+          hint: 'As printed on your government ID'
+        }) %>
+
+        <%- include('partials/field', {
+          name: 'email',
+          label: 'Email address',
+          type: 'email',
+          required: true,
+          placeholder: 'name@example.com',
+          autocomplete: 'email',
+          maxlength: 120,
+          hint: 'All further communication goes here'
+        }) %>
+
+        <%- include('partials/field', {
+          name: 'phone',
+          label: 'Mobile number',
+          type: 'tel',
+          required: true,
+          placeholder: '+91 98765 43210',
+          autocomplete: 'tel',
+          inputmode: 'tel',
+          hint: '10 digits starting 6–9; +91 is accepted and removed'
+        }) %>
+
+        <%- include('partials/field', {
+          name: 'dob',
+          label: 'Date of birth',
+          type: 'date',
+          required: true,
+          max: new Date().toISOString().slice(0, 10),
+          hint: 'Applicants must be 18–65 years old'
+        }) %>
+      </div>
+
+      <fieldset class="field choice <%= errors.gender ? 'field--error' : '' %>">
+        <legend>Gender<span class="req" aria-hidden="true">*</span></legend>
+        <div class="chips">
+          <% genders.forEach(function (gender) { %>
+            <label class="chip <%= values.gender === gender.id ? 'chip--on' : '' %>">
+              <input type="radio" name="gender" value="<%= gender.id %>" <%= values.gender === gender.id ? 'checked' : '' %> />
+              <span><%= gender.label %></span>
+            </label>
+          <% }) %>
+        </div>
+        <% if (errors.gender) { %>
+          <p class="msg msg--err"><span aria-hidden="true">⚠</span> <%= errors.gender %></p>
+        <% } else { %>
+          <p class="msg">Used for statutory reporting only.</p>
+        <% } %>
+      </fieldset>
+    </section>
+
+    <section class="fs">
+      <h2 class="fs__title"><span class="fs__num">2</span> Role and experience</h2>
+
+      <div class="field <%= errors.position ? 'field--error' : '' %>">
+        <label for="position">Role applying for<span class="req" aria-hidden="true">*</span></label>
+        <div class="select">
+          <select id="position" name="position" aria-invalid="<%= errors.position ? 'true' : 'false' %>">
+            <option value="">Select a role…</option>
+            <% positions.forEach(function (position) { %>
+              <option value="<%= position.id %>" <%= values.position === position.id ? 'selected' : '' %>>
+                <%= position.title %> · <%= position.experienceMin %>–<%= position.experienceMax %> yrs
+              </option>
+            <% }) %>
+          </select>
+          <span class="select__chevron" aria-hidden="true">▾</span>
+        </div>
+        <% if (errors.position) { %>
+          <p class="msg msg--err"><span aria-hidden="true">⚠</span> <%= errors.position %></p>
+        <% } else { %>
+          <p class="msg">Each role has its own experience band, checked on the server.</p>
+        <% } %>
+      </div>
+
+      <div class="grid2">
+        <%- include('partials/field', {
+          name: 'experienceYears',
+          label: 'Total experience (years)',
+          required: true,
+          inputmode: 'numeric',
+          placeholder: 'e.g. 4',
+          maxlength: 2,
+          hint: 'Whole years only. Must fit the role and your age.'
+        }) %>
+
+        <%- include('partials/field', {
+          name: 'expectedCtc',
+          label: 'Expected CTC (₹ lakhs per annum)',
+          inputmode: 'decimal',
+          placeholder: 'e.g. 12.5',
+          step: '0.5',
+          hint: 'Required if you have 1 or more years of experience'
+        }) %>
+      </div>
+    </section>
+
+    <section class="fs">
+      <h2 class="fs__title"><span class="fs__num">3</span> Skills and links</h2>
+
+      <fieldset class="field choice <%= errors.skills ? 'field--error' : '' %>">
+        <legend>Skills<span class="req" aria-hidden="true">*</span></legend>
+        <div class="chips">
+          <% skills.forEach(function (skill) { %>
+            <label class="chip <%= values.skills.includes(skill.id) ? 'chip--on' : '' %>">
+              <input
+                type="checkbox"
+                name="skills"
+                value="<%= skill.id %>"
+                <%= values.skills.includes(skill.id) ? 'checked' : '' %>
+              />
+              <span><%= skill.label %></span>
+            </label>
+          <% }) %>
+        </div>
+        <% if (errors.skills) { %>
+          <p class="msg msg--err"><span aria-hidden="true">⚠</span> <%= errors.skills %></p>
+        <% } else { %>
+          <p class="msg">Choose between 1 and 5 skills.</p>
+        <% } %>
+      </fieldset>
+
+      <%- include('partials/field', {
+        name: 'portfolioUrl',
+        label: 'Portfolio / GitHub / LinkedIn',
+        type: 'url',
+        placeholder: 'https://github.com/your-name',
+        hint: 'Optional, but must be a full http(s) link'
+      }) %>
+
+      <div class="field <%= errors.coverLetter ? 'field--error' : '' %>">
+        <label for="coverLetter">Why should we hire you?<span class="req" aria-hidden="true">*</span></label>
+        <textarea
+          id="coverLetter"
+          name="coverLetter"
+          rows="6"
+          maxlength="1200"
+          aria-invalid="<%= errors.coverLetter ? 'true' : 'false' %>"
+          <% if (errors.coverLetter) { %>aria-describedby="coverLetter-error"<% } else { %>aria-describedby="coverLetter-hint"<% } %>
+        ><%= values.coverLetter %></textarea>
+        <% if (errors.coverLetter) { %>
+          <p class="msg msg--err" id="coverLetter-error"><span aria-hidden="true">⚠</span> <%= errors.coverLetter %></p>
+        <% } else { %>
+          <p class="msg" id="coverLetter-hint">50–1200 characters. The server counts the characters, not the browser.</p>
+        <% } %>
+      </div>
+    </section>
+
+    <section class="fs">
+      <h2 class="fs__title"><span class="fs__num">4</span> Availability and declaration</h2>
+
+      <div class="grid2">
+        <%- include('partials/field', {
+          name: 'availableFrom',
+          label: 'Earliest joining date',
+          type: 'date',
+          required: true,
+          hint: 'Today or later, within 180 days'
+        }) %>
+
+        <fieldset class="field choice <%= errors.relocate ? 'field--error' : '' %>">
+          <legend>Willing to relocate?<span class="req" aria-hidden="true">*</span></legend>
+          <div class="chips">
+            <label class="chip <%= values.relocate === 'yes' ? 'chip--on' : '' %>">
+              <input type="radio" name="relocate" value="yes" <%= values.relocate === 'yes' ? 'checked' : '' %> />
+              <span>Yes</span>
+            </label>
+            <label class="chip <%= values.relocate === 'no' ? 'chip--on' : '' %>">
+              <input type="radio" name="relocate" value="no" <%= values.relocate === 'no' ? 'checked' : '' %> />
+              <span>No</span>
+            </label>
+          </div>
+          <% if (errors.relocate) { %>
+            <p class="msg msg--err"><span aria-hidden="true">⚠</span> <%= errors.relocate %></p>
+          <% } %>
+        </fieldset>
+      </div>
+
+      <div class="field <%= errors.consent ? 'field--error' : '' %>">
+        <label class="check" for="consent">
+          <input
+            id="consent"
+            type="checkbox"
+            name="consent"
+            <%= values.consent ? 'checked' : '' %>
+            aria-invalid="<%= errors.consent ? 'true' : 'false' %>"
+          />
+          <span>I confirm that the information above is true and complete.</span>
+        </label>
+        <% if (errors.consent) { %>
+          <p class="msg msg--err"><span aria-hidden="true">⚠</span> <%= errors.consent %></p>
+        <% } %>
+      </div>
+    </section>
+
+    <div class="form__foot">
+      <p class="form__note">
+        On submit the request is <code>POST</code>ed to <code>/apply</code>, validated by
+        <code>src/lib/validators.js</code>, and either re-rendered with errors (400) or saved and
+        redirected (303).
+      </p>
+      <button class="btn btn--primary" type="submit">Submit application</button>
+    </div>
+  </form>
+
+  <p class="fineprint">
+    Prefer JSON? The same rules are available at
+    <code>POST /api/validate</code> and <code>POST /api/applications</code>.
+  </p>
+</main>
+
+<%- include('partials/footer') %>

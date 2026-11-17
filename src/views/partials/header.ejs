@@ -1,0 +1,14 @@
+<header class="topbar">
+  <a class="brand" href="/">
+    <span class="brand__mark" aria-hidden="true">TB</span>
+    <span class="brand__text">
+      <strong><%= appName %></strong>
+      <small><%= company %> · Careers</small>
+    </span>
+  </a>
+  <nav class="nav" aria-label="Main">
+    <a href="/" class="<%= currentPath === '/' ? 'is-on' : '' %>">Home</a>
+    <a href="/apply" class="<%= currentPath === '/apply' ? 'is-on' : '' %>">Apply</a>
+    <a href="/applications" class="<%= currentPath.startsWith('/applications') ? 'is-on' : '' %>">Applications</a>
+  </nav>
+</header>

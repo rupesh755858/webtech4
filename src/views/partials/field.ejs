@@ -1,0 +1,31 @@
+<%
+  // One reusable input field: label + control + error message or hint.
+  // `values` and `errors` come from the parent view's locals.
+  const message = errors[name];
+  const inputType = locals.type || 'text';
+%>
+<div class="field <%= message ? 'field--error' : '' %>">
+  <label for="<%= name %>">
+    <%= label %><% if (locals.required) { %><span class="req" aria-hidden="true">*</span><% } %>
+  </label>
+  <input
+    id="<%= name %>"
+    name="<%= name %>"
+    type="<%= inputType %>"
+    value="<%= values[name] === undefined || values[name] === null ? '' : values[name] %>"
+    <% if (locals.placeholder) { %>placeholder="<%= placeholder %>"<% } %>
+    <% if (locals.autocomplete) { %>autocomplete="<%= autocomplete %>"<% } %>
+    <% if (locals.min) { %>min="<%= min %>"<% } %>
+    <% if (locals.max) { %>max="<%= max %>"<% } %>
+    <% if (locals.step) { %>step="<%= step %>"<% } %>
+    <% if (locals.inputmode) { %>inputmode="<%= inputmode %>"<% } %>
+    <% if (locals.maxlength) { %>maxlength="<%= maxlength %>"<% } %>
+    aria-invalid="<%= message ? 'true' : 'false' %>"
+    <% if (message) { %>aria-describedby="<%= name %>-error"<% } else if (locals.hint) { %>aria-describedby="<%= name %>-hint"<% } %>
+  />
+  <% if (message) { %>
+    <p class="msg msg--err" id="<%= name %>-error"><span aria-hidden="true">⚠</span> <%= message %></p>
+  <% } else if (locals.hint) { %>
+    <p class="msg" id="<%= name %>-hint"><%= hint %></p>
+  <% } %>
+</div>

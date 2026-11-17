@@ -1,0 +1,72 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/header') %>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="hero__text">
+      <p class="eyebrow">We are hiring · <%= positions.length %> open roles</p>
+      <h1>Build software that 40 million people rely on.</h1>
+      <p class="hero__lead">
+        <%= company %> is a product engineering studio in Pune. Apply in one form — every answer is
+        validated on our server before your application is accepted.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="/apply">Apply now</a>
+        <a class="btn btn--ghost" href="/applications">View applications</a>
+      </div>
+      <p class="hero__meta">
+        <%= applicationCount %> application<%= applicationCount === 1 ? '' : 's' %> received so far ·
+        stored on the server, not in your browser
+      </p>
+    </div>
+    <ul class="hero__stats">
+      <li><strong>14</strong><span>checks run per submission</span></li>
+      <li><strong>0</strong><span>fields trusted from the browser</span></li>
+      <li><strong>303</strong><span>redirect after a valid POST</span></li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2 class="section__title">Open positions</h2>
+    <div class="jobs">
+      <% positions.forEach(function (position) { %>
+        <article class="job">
+          <div class="job__head">
+            <h3><%= position.title %></h3>
+            <span class="tag"><%= position.type %></span>
+          </div>
+          <p class="job__meta">
+            <%= position.location %> · <%= position.experienceMin %>–<%= position.experienceMax %> years
+            experience
+          </p>
+          <a class="link" href="/apply">Apply for this role →</a>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="section note">
+    <h2 class="section__title">How the validation works</h2>
+    <ol class="steps">
+      <li>
+        <strong>The browser submits, it does not decide.</strong> The form is sent with
+        <code>novalidate</code>, so HTML5 checks cannot bypass the server rules.
+      </li>
+      <li>
+        <strong>The server parses the request.</strong> <code>express.urlencoded()</code> turns the
+        POST body into <code>req.body</code>, which the validator inspects field by field.
+      </li>
+      <li>
+        <strong>Invalid input returns 400.</strong> The same page is re-rendered with the applicant's
+        values and one specific message per field.
+      </li>
+      <li>
+        <strong>Valid input is saved, then redirected.</strong> The record is written to
+        <code>data/applications.json</code> and the browser receives a 303 redirect to a GET
+        confirmation page, so a refresh cannot duplicate the submission.
+      </li>
+    </ol>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

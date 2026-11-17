@@ -1,0 +1,16 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/header') %>
+
+<main class="wrap wrap--narrow">
+  <div class="card empty">
+    <p class="empty__icon" aria-hidden="true">⚠️</p>
+    <h1>Error <%= status %></h1>
+    <p><%= message %></p>
+    <div class="actions">
+      <a class="btn btn--primary" href="/">Go to home</a>
+      <a class="btn btn--ghost" href="/apply">Apply</a>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

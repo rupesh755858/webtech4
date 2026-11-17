@@ -1,0 +1,73 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/header') %>
+
+<main class="wrap wrap--narrow">
+  <% if (justSubmitted) { %>
+    <div class="success" role="status">
+      <span class="success__tick" aria-hidden="true">✓</span>
+      <div>
+        <h2>Application submitted successfully</h2>
+        <p>
+          Thank you, <%= application.fullName.split(' ')[0] %>. The server validated every field and
+          saved your application. Our hiring team will write to
+          <strong><%= application.email %></strong> within 5 working days.
+        </p>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="page-head">
+      <p class="eyebrow">Application record</p>
+      <h1><%= application.id %></h1>
+      <p>Submitted on <%= new Date(application.createdAt).toLocaleString('en-IN', { dateStyle: 'full', timeStyle: 'short' }) %>.</p>
+    </div>
+  <% } %>
+
+  <div class="card">
+    <div class="card__head">
+      <h2 class="card__title">Application summary</h2>
+      <span class="pill"><%= application.status %></span>
+    </div>
+
+    <dl class="detail">
+      <div><dt>Reference</dt><dd class="mono"><%= application.id %></dd></div>
+      <div><dt>Applicant</dt><dd><%= application.fullName %></dd></div>
+      <div><dt>Email</dt><dd><%= application.email %></dd></div>
+      <div><dt>Mobile</dt><dd><%= formatPhone(application.phone) %></dd></div>
+      <div><dt>Date of birth</dt><dd><%= formatDate(application.dob) %> (<%= application.age %> years)</dd></div>
+      <div><dt>Gender</dt><dd><%= genderLabel(application.gender) %></dd></div>
+      <div><dt>Role</dt><dd><%= application.positionTitle %></dd></div>
+      <div><dt>Experience</dt><dd><%= application.experienceYears %> year<%= application.experienceYears === 1 ? '' : 's' %></dd></div>
+      <div><dt>Expected CTC</dt><dd><%= formatCtc(application.expectedCtc) %></dd></div>
+      <div><dt>Earliest joining</dt><dd><%= formatDate(application.availableFrom) %></dd></div>
+      <div><dt>Willing to relocate</dt><dd><%= application.relocate === 'yes' ? 'Yes' : 'No' %></dd></div>
+      <div>
+        <dt>Portfolio</dt>
+        <dd>
+          <% if (application.portfolioUrl) { %>
+            <a class="link" href="<%= application.portfolioUrl %>" rel="noopener noreferrer nofollow" target="_blank"><%= application.portfolioUrl %></a>
+          <% } else { %>—<% } %>
+        </dd>
+      </div>
+      <div class="detail__wide">
+        <dt>Skills</dt>
+        <dd>
+          <% skillLabels(application.skills).forEach(function (label) { %>
+            <span class="tag"><%= label %></span>
+          <% }) %>
+        </dd>
+      </div>
+      <div class="detail__wide">
+        <dt>Cover note</dt>
+        <dd class="cover"><%= application.coverLetter %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="actions">
+    <a class="btn btn--primary" href="/apply">Submit another application</a>
+    <a class="btn btn--ghost" href="/applications">All applications</a>
+    <a class="btn btn--ghost" href="/api/applications/<%= application.id %>">View as JSON</a>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

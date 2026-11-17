@@ -1,0 +1,19 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/header') %>
+
+<main class="wrap wrap--narrow">
+  <div class="card empty">
+    <p class="empty__icon" aria-hidden="true">🔍</p>
+    <h1>404 — page not found</h1>
+    <p>
+      The address you opened does not exist on this server. No route in
+      <code>src/routes/</code> matched the request, so the 404 handler responded with status 404.
+    </p>
+    <div class="actions">
+      <a class="btn btn--primary" href="/">Go to home</a>
+      <a class="btn btn--ghost" href="/apply">Apply</a>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

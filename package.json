@@ -1,0 +1,24 @@
+{
+  "name": "talentbridge-node",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TalentBridge careers portal - a Node.js/Express application demonstrating server-side validation, routing and request/response handling",
+  "type": "module",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test tests/"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^24.43.1",
+    "supertest": "^7.0.0"
+  }
+}

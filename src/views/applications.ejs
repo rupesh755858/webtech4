@@ -1,0 +1,60 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/header') %>
+
+<main class="wrap">
+  <div class="page-head page-head--row">
+    <div>
+      <h1>Applications received</h1>
+      <p>
+        <%= applications.length %> application<%= applications.length === 1 ? '' : 's' %> stored on the
+        server in <code>data/applications.json</code>. Only valid submissions are saved.
+      </p>
+    </div>
+    <a class="btn btn--primary" href="/apply">New application</a>
+  </div>
+
+  <% if (!applications.length) { %>
+    <div class="card empty">
+      <p class="empty__icon" aria-hidden="true">📄</p>
+      <h2>No applications yet</h2>
+      <p>Submit the form once and the record will appear here with a reference number.</p>
+      <a class="btn btn--primary" href="/apply">Apply now</a>
+    </div>
+  <% } else { %>
+    <div class="card table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Reference</th>
+            <th scope="col">Applicant</th>
+            <th scope="col">Role</th>
+            <th scope="col">Experience</th>
+            <th scope="col">Expected CTC</th>
+            <th scope="col">Received</th>
+            <th scope="col"><span class="sr-only">Details</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% applications.forEach(function (application) { %>
+            <tr>
+              <td><span class="mono"><%= application.id %></span></td>
+              <td>
+                <strong><%= application.fullName %></strong>
+                <span class="cell-sub"><%= application.email %></span>
+              </td>
+              <td><%= application.positionTitle || application.position %></td>
+              <td><%= application.experienceYears %> yr<%= application.experienceYears === 1 ? '' : 's' %></td>
+              <td><%= formatCtc(application.expectedCtc) %></td>
+              <td class="nowrap">
+                <%= new Date(application.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) %>
+              </td>
+              <td><a class="link" href="/applications/<%= application.id %>">View</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</main>
+
+<%- include('partials/footer') %>
